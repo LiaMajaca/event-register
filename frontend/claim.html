@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Badge - CredzOnChain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(30, 64, 175, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .badge-icon::before {
+            content: "🏆";
+            font-size: 2.5rem;
+        }
+
+        h1 {
+            color: #1e40af;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .event-id-container {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 2px solid #bfdbfe;
+        }
+
+        .event-id-label {
+            color: #1e40af;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        #displayEventId {
+            color: #1e3a8a;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            word-break: break-all;
+        }
+
+        button {
+            width: 100%;
+            padding: 1.125rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        #connectWalletButton {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        #connectWalletButton:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        #connectWalletButton::before {
+            content: "🔗";
+            font-size: 1.2rem;
+        }
+
+        #claimBadgeButton {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        #claimBadgeButton:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
+        }
+
+        #claimBadgeButton::before {
+            content: "🎫";
+            font-size: 1.2rem;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        #walletAddressDisplay {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 2px solid #bfdbfe;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .wallet-label {
+            color: #3b82f6;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .wallet-address {
+            color: #1e3a8a;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+
+        .message {
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            animation: slideIn 0.3s ease;
+            text-align: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+
+        .message.success::before {
+            content: "✓ ";
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 2px solid #f87171;
+        }
+
+        .message.error::before {
+            content: "✗ ";
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #eff6ff;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .info-box p {
+            color: #1e40af;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #1e3a8a;
+        }
+
+        .badge-display {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-top: 2rem;
+            border: 3px solid #3b82f6;
+            text-align: center;
+            animation: scaleIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .badge-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20%, 20%); }
+        }
+
+        .badge-display-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .badge-display h2 {
+            color: #1e40af;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .badge-image-container {
+            width: 180px;
+            height: 180px;
+            margin: 1.5rem auto;
+            position: relative;
+        }
+
+        .badge-display img {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            object-fit: cover;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .badge-display h3 {
+            color: #1e3a8a;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .badge-display p {
+            color: #3b82f6;
+            margin: 0.75rem 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .badge-detail {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.5rem auto;
+            max-width: 300px;
+            font-weight: 600;
+        }
+
+        .tx-hash {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .nav-button {
+            flex: 1;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .nav-button.secondary {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #475569;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .badge-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .badge-icon::before {
+                font-size: 2rem;
+            }
+
+            .badge-display {
+                padding: 2rem 1.5rem;
+            }
+
+            .badge-display h2 {
+                font-size: 1.5rem;
+            }
+
+            .badge-image-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge-icon"></div>
+        <h1>Claim Your Badge</h1>
+        <p class="subtitle">Connect your wallet to claim your event credential</p>
+        
+        <div class="event-id-container">
+            <div class="event-id-label">Event ID</div>
+            <input type="text" id="eventIdInput" placeholder="Enter Event ID or use QR code link" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-family: 'Courier New', monospace;">
+            <div id="displayEventId" style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;"></div>
+        </div>
+
+        <div style="margin-bottom:0.5rem;color:#991b1b;font-weight:600;text-align:center;">Wallet connection is required to claim a badge.</div>
+        <button id="connectWalletButton">Connect Wallet</button>
+        
+        <div id="walletAddressDisplay" style="display: none;">
+            <div class="wallet-label">Connected Wallet</div>
+            <div class="wallet-address" id="walletAddress"></div>
+        </div>
+
+        <button id="claimBadgeButton" style="display: none;">Claim Badge</button>
+        
+        <div id="claimResult" class="message" style="display: none;"></div>
+
+        <div id="badgeDisplay" class="badge-display" style="display: none;">
+            <div class="badge-display-content">
+                <div class="success-icon">🎉</div>
+                <h2>Badge Claimed Successfully!</h2>
+                <div class="badge-image-container">
+                    <img id="badgeImage" src="" alt="Badge">
+                </div>
+                <h3 id="badgeName"></h3>
+                <p id="badgeDescription"></p>
+                <div class="badge-detail" id="tokenIdDisplay" style="display: none;">
+                    <strong>Token ID:</strong> <span id="badgeTokenId"></span>
+                </div>
+                <div class="badge-detail">
+                    <strong>Event ID:</strong> <span id="badgeEventId"></span>
+                </div>
+                <div class="tx-hash" id="txHashDisplay"></div>
+            </div>
+        </div>
+
+        <div id="navigationButtons" class="navigation-buttons" style="display: none;">
+            <a href="view-badges.html" class="nav-button">View All Badges</a>
+            <a href="organizer.html" class="nav-button secondary">Create Event</a>
+        </div>
+
+        <div class="info-box">
+            <p><strong>How it works:</strong> Connect your Web3 wallet, then claim your blockchain-verified attendance badge. This NFT credential proves your participation in this event.</p>
+        </div>
+        <div class="navigation">
+            <a href="index.html">🏠 Home</a>
+            <a href="organizer.html">➕ Create Event</a>
+            <a href="claim.html">🎫 Claim Badge</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    
+    <script>
+        let connectedAddress = null;
+        let eventIdFromUrl = null;
+        
+        // Determine API base URL - use same host as frontend but port 8000
+        const API_BASE_URL = (() => {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            return `${protocol}//${hostname}:8000`;
+        })();
+
+        // Extract event ID from URL
+        function getEventIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('eventId');
+        }
+
+        // API function to claim badge
+        async function claimBadge(eventId, walletAddress) {
+            const response = await fetch(`${API_BASE_URL}/claim_badge`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    eventId: parseInt(eventId), 
+                    walletAddress: walletAddress 
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Failed to claim badge');
+            }
+            
+            return await response.json();
+        }
+
+        // API function to get badge details
+        async function getBadgeDetails(eventId, walletAddress) {
+            const response = await fetch(`${API_BASE_URL}/get_badge_details?eventId=${eventId}&walletAddress=${walletAddress}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+
+        // Function to display badge
+        function displayBadge(badge, txHash) {
+            const badgeDisplayDiv = document.getElementById('badgeDisplay');
+            const navigationButtons = document.getElementById('navigationButtons');
+            
+            // Set badge image
+            const badgeImage = document.getElementById('badgeImage');
+            const defaultImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="180" height="180"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%233b82f6;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%232563eb;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23grad)" width="180" height="180" rx="16"/%3E%3Ctext x="50%25" y="50%25" font-size="80" text-anchor="middle" dy=".3em"%3E🏆%3C/text%3E%3C/svg%3E';
+            
+            badgeImage.src = badge.image || defaultImage;
+            badgeImage.onerror = function() {
+                this.src = defaultImage;
+            };
+            
+            // Set badge details
+            document.getElementById('badgeName').textContent = badge.name || 'Event Badge';
+            document.getElementById('badgeDescription').textContent = badge.description || 'Congratulations on claiming this badge!';
+            document.getElementById('badgeEventId').textContent = badge.eventId;
+            
+            // Set token ID if available
+            if (badge.tokenId) {
+                document.getElementById('badgeTokenId').textContent = badge.tokenId;
+                document.getElementById('tokenIdDisplay').style.display = 'block';
+            }
+            
+            // Set transaction hash
+            if (txHash) {
+                document.getElementById('txHashDisplay').innerHTML = `
+                    <strong>Transaction:</strong><br>
+                    ${txHash.slice(0, 10)}...${txHash.slice(-8)}
+                `;
+            }
+            
+            // Show badge display and navigation buttons
+            badgeDisplayDiv.style.display = 'block';
+            navigationButtons.style.display = 'flex';
+        }
+
+        // Connect wallet
+        document.getElementById('connectWalletButton').addEventListener('click', async () => {
+            const btn = document.getElementById('connectWalletButton');
+            const walletDisplay = document.getElementById('walletAddressDisplay');
+            const claimBtn = document.getElementById('claimBadgeButton');
+            const resultDiv = document.getElementById('claimResult');
+
+            if (typeof window.ethereum === 'undefined') {
+                // No MetaMask — use the user's demo wallet address for the demo environment
+                const demoAddress = '0x7Bc87758c119edB7e860CCAaE8E26e47a22928d1';
+
+                connectedAddress = demoAddress;
+                document.getElementById('walletAddress').textContent = `${connectedAddress.slice(0,6)}...${connectedAddress.slice(-4)}`;
+                walletDisplay.style.display = 'block';
+                btn.style.display = 'none';
+                claimBtn.style.display = 'block';
+
+                resultDiv.className = 'message success';
+                resultDiv.textContent = 'No MetaMask detected — using demo wallet for this demo.';
+                resultDiv.style.display = 'block';
+
+                // Hide success message after 3 seconds
+                setTimeout(() => { resultDiv.style.display = 'none'; }, 3000);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Connecting...';
+
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                connectedAddress = accounts[0];
+                
+                document.getElementById('walletAddress').textContent = 
+                    `${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-4)}`;
+                
+                walletDisplay.style.display = 'block';
+                btn.style.display = 'none';
+                claimBtn.style.display = 'block';
+                
+                resultDiv.className = 'message success';
+                resultDiv.textContent = 'Wallet connected successfully!';
+                resultDiv.style.display = 'block';
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                resultDiv.className = 'message error';
+                resultDiv.textContent = `Connection failed: ${error.message}`;
+                resultDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '🔗 Connect Wallet';
+            }
+        });
+
+        // Claim badge
+        document.getElementById('claimBadgeButton').addEventListener('click', async () => {
+            if (!connectedAddress || !eventIdFromUrl) {
+                alert('Please connect your wallet and ensure event ID is valid');
+                return;
+            }
+
+            const btn = document.getElementById('claimBadgeButton');
+            const resultDiv = document.getElementById('claimResult');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Claiming Badge...';
+            resultDiv.style.display = 'none';
+
+            try {
+                console.log('Claiming badge for event:', eventIdFromUrl, 'wallet:', connectedAddress);
+                
+                const result = await claimBadge(eventIdFromUrl, connectedAddress);
+                
+                console.log('Claim result:', result);
+                
+                if (result.success || result.status === 'success') {
+                    const txHash = result.transactionHash || result.txHash;
+                    
+                    resultDiv.className = 'message success';
+                    resultDiv.innerHTML = `
+                        🎉 Badge claimed successfully!<br>
+                        <small style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem; display: block;">Processing blockchain confirmation...</small>
+                    `;
+                    resultDiv.style.display = 'block';
+                    
+                    // Try to fetch and display badge details
+                    try {
+                        console.log('Fetching badge details...');
+                        const badgeDetails = await getBadgeDetails(eventIdFromUrl, connectedAddress);
+                        console.log('Badge details:', badgeDetails);
+                        
+                        if (badgeDetails && badgeDetails.success) {
+                            displayBadge(badgeDetails, txHash);
+                            resultDiv.style.display = 'none';
+                        } else {
+                            // Show basic success with event ID if details not available
+                            displayBadge({
+                                name: 'Event Badge',
+                                description: 'Successfully claimed your event badge!',
+                                eventId: eventIdFromUrl
+                            }, txHash);
+                            resultDiv.style.display = 'none';
+                        }
+                    } catch (detailsError) {
+                        console.warn('Could not fetch badge details:', detailsError);
+                        // Still show success with basic info
+                        displayBadge({
+                            name: 'Event Badge',
+                            description: 'Successfully claimed your event badge!',
+                            eventId: eventIdFromUrl
+                        }, txHash);
+                        resultDiv.style.display = 'none';
+                    }
+                    
+                    // Hide the claim button after successful claim
+                    btn.style.display = 'none';
+                } else {
+                    throw new Error(result.error || result.detail || 'Claim failed');
+                }
+            } catch (error) {
+                console.error('Claim error:', error);
+                resultDiv.className = 'message error';
+                resultDiv.textContent = `Claim failed: ${error.message}`;
+                resultDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '🎫 Claim Badge';
+            }
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            eventIdFromUrl = getEventIdFromUrl();
+            const eventIdInput = document.getElementById('eventIdInput');
+            const displayEventId = document.getElementById('displayEventId');
+            const claimBtn = document.getElementById('claimBadgeButton');
+            
+            if (eventIdFromUrl) {
+                // If URL has eventId, populate and disable input
+                eventIdInput.value = eventIdFromUrl;
+                eventIdInput.disabled = true;
+                displayEventId.textContent = `✓ Event ID: ${eventIdFromUrl}`;
+                displayEventId.style.color = '#10b981';
+                claimBtn.style.display = 'block';
+                console.log('Event ID from URL:', eventIdFromUrl);
+            } else {
+                // If no URL eventId, allow manual entry
+                displayEventId.textContent = 'Enter or scan a valid claim link to proceed';
+                displayEventId.style.color = '#64748b';
+                eventIdInput.focus();
+            }
+            
+            // Listen for manual input changes
+            eventIdInput.addEventListener('change', () => {
+                let manualEventId = eventIdInput.value.trim();
+
+                // If the user pasted a full claim URL, try to extract the eventId param
+                try {
+                    if (manualEventId.startsWith('http')) {
+                        const parsed = new URL(manualEventId);
+                        const param = parsed.searchParams.get('eventId');
+                        if (param) manualEventId = param;
+                    }
+                } catch (e) {
+                    // ignore URL parse errors and fall back to regex below
+                }
+
+                // Fallback: extract first sequence of digits from the input
+                if (!/^[0-9]+$/.test(manualEventId)) {
+                    const m = manualEventId.match(/(\d+)/);
+                    if (m) manualEventId = m[1];
+                }
+
+                if (manualEventId && /^[0-9]+$/.test(manualEventId)) {
+                    eventIdFromUrl = manualEventId;
+                    displayEventId.textContent = `✓ Event ID: ${manualEventId}`;
+                    displayEventId.style.color = '#10b981';
+                    claimBtn.style.display = 'block';
+                    console.log('Manual Event ID entered:', manualEventId);
+                } else {
+                    eventIdFromUrl = null;
+                    displayEventId.textContent = 'Please enter a valid numeric Event ID or paste a claim link';
+                    displayEventId.style.color = '#991b1b';
+                    claimBtn.style.display = 'none';
+                }
+            });
+        });
+
+        // Handle wallet account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    console.log('Wallet disconnected');
+                    location.reload();
+                } else {
+                    console.log('Account changed to:', accounts[0]);
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

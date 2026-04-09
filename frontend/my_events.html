@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Events - CredzOnChain</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 700px; margin: 2rem auto; background: white; border-radius: 20px; padding: 2.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        h1 { color: #667eea; margin-bottom: 1rem; }
+        .event-list { margin-top: 2rem; }
+        .event-card { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 2px solid #e2e8f0; }
+        .event-title { color: #764ba2; font-size: 1.2rem; font-weight: 700; }
+        .event-meta { color: #64748b; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .event-desc { color: #475569; margin-bottom: 0.5rem; }
+        .no-events { color: #991b1b; text-align: center; margin-top: 2rem; }
+        #connectWalletButton { width: 100%; margin-bottom: 1rem; }
+        #walletAddressDisplay { display: none; background: #f8fafc; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 2px solid #bfdbfe; text-align: center; }
+        .wallet-label { color: #667eea; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+        .wallet-address { color: #764ba2; font-family: 'Courier New', monospace; font-weight: 600; font-size: 0.95rem; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Events</h1>
+        <button id="connectWalletButton" type="button">Connect Wallet</button>
+        <div id="walletAddressDisplay">
+            <div class="wallet-label">Connected Wallet</div>
+            <div class="wallet-address" id="walletAddress"></div>
+        </div>
+        <div class="event-list" id="eventList"></div>
+        <div class="no-events" id="noEvents" style="display:none;">No events found for this wallet.</div>
+    </div>
+    <div class="navigation" style="max-width:700px;margin:1rem auto;text-align:center;">
+        <a href="index.html">🏠 Home</a>
+        <a href="organizer.html">➕ Create Event</a>
+        <a href="claim.html">🎫 Claim Badge</a>
+    </div>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script>
+        let connectedAddress = null;
+        const connectBtn = document.getElementById('connectWalletButton');
+        const walletDisplay = document.getElementById('walletAddressDisplay');
+        const walletAddrSpan = document.getElementById('walletAddress');
+        const eventList = document.getElementById('eventList');
+        const noEvents = document.getElementById('noEvents');
+        const API_BASE_URL = (() => {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            return `${protocol}//${hostname}:8000`;
+        })();
+        connectBtn.addEventListener('click', async () => {
+            if (typeof window.ethereum === 'undefined') {
+                // Demo fallback wallet
+                const demoAddress = '0x7Bc87758c119edB7e860CCAaE8E26e47a22928d1';
+                connectedAddress = demoAddress;
+                walletAddrSpan.textContent = `${connectedAddress.slice(0,6)}...${connectedAddress.slice(-4)}`;
+                walletDisplay.style.display = 'block';
+                connectBtn.style.display = 'none';
+                loadMyEvents();
+                return;
+            }
+            connectBtn.disabled = true;
+            connectBtn.innerHTML = '<span class="loading"></span> Connecting...';
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                connectedAddress = accounts[0];
+                walletAddrSpan.textContent = `${connectedAddress.slice(0,6)}...${connectedAddress.slice(-4)}`;
+                walletDisplay.style.display = 'block';
+                connectBtn.style.display = 'none';
+                loadMyEvents();
+            } catch (error) {
+                alert('Connection failed: ' + error.message);
+                connectBtn.disabled = false;
+                connectBtn.innerHTML = 'Connect Wallet';
+            }
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.ethereum === 'undefined') {
+                connectBtn.click();
+            }
+        });
+        async function loadMyEvents() {
+            eventList.innerHTML = '';
+            noEvents.style.display = 'none';
+            if (!connectedAddress) return;
+            // Fetch events for this organizer
+            const res = await fetch(`${API_BASE_URL}/get_events_by_organizer?organizer=${connectedAddress}`);
+            if (!res.ok) {
+                eventList.innerHTML = '<div class="no-events">Failed to load events.</div>';
+                return;
+            }
+            const data = await res.json();
+            if (!data.success || !data.events || data.events.length === 0) {
+                noEvents.style.display = 'block';
+                return;
+            }
+            data.events.forEach(ev => {
+                const div = document.createElement('div');
+                div.className = 'event-card';
+                div.innerHTML = `<div class='event-title'>${ev.name}</div>
+                    <div class='event-meta'>Event ID: ${ev.eventId} | Type: ${ev.eventType} | ${new Date(ev.timestamp*1000).toLocaleString()}</div>
+                    <div class='event-desc'>${ev.description}</div>`;
+                eventList.appendChild(div);
+            });
+        }
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', (accounts) => { location.reload(); });
+        }
+    </script>
+</body>
+</html>

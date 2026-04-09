@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CredzOnChain Presentation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Custom Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Print Mode Styles */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .slide-container { 
+                box-shadow: none !important; 
+                border: 2px solid #e5e7eb; 
+                margin-bottom: 2rem; 
+                page-break-after: always;
+                height: 600px !important;
+                display: block !important;
+            }
+            .slide-wrapper {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            /* Force show all slides in print */
+            .slide { display: flex !important; opacity: 1 !important; visibility: visible !important; position: relative !important; }
+        }
+
+        /* View Mode Styles (Default) */
+        body.view-mode { overflow: hidden; }
+        body.view-mode .slide { display: none; }
+        body.view-mode .slide.active { display: flex; }
+        
+        body.print-mode { overflow-y: auto; background: white; padding: 40px; }
+        body.print-mode .controls { display: none; }
+        body.print-mode .main-stage { 
+            box-shadow: none; 
+            background: transparent; 
+            height: auto; 
+            max-width: 100%;
+        }
+        body.print-mode .slide { 
+            display: flex; 
+            height: 600px; 
+            border: 2px solid #e2e8f0; 
+            margin-bottom: 40px; 
+            page-break-inside: avoid;
+            position: relative;
+        }
+        body.print-mode .print-exit-btn { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-slate-800 h-screen w-screen flex flex-col items-center justify-center view-mode transition-colors duration-300">
+
+    <!-- Print Mode Exit Button -->
+    <div class="fixed top-4 right-4 z-50 hidden print-exit-btn no-print">
+        <button onclick="togglePrintMode()" class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors">
+            Exit Print Mode
+        </button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls absolute z-10 bottom-8 flex gap-4 items-center bg-white/80 backdrop-blur px-6 py-3 rounded-full shadow-lg border border-gray-200">
+        <button onclick="changeSlide(-1)" id="prevBtn" class="p-2 rounded-full hover:bg-blue-100 text-blue-900 transition-colors disabled:opacity-30">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <span id="slideCounter" class="text-sm font-medium text-blue-900 min-w-[60px] text-center">1 / 8</span>
+        <button onclick="changeSlide(1)" id="nextBtn" class="p-2 rounded-full hover:bg-blue-100 text-blue-900 transition-colors disabled:opacity-30">
+            <i data-lucide="chevron-right"></i>
+        </button>
+
+        <div class="w-px h-6 bg-gray-300 mx-2"></div>
+        
+        <button onclick="togglePrintMode()" class="p-2 rounded-full hover:bg-blue-100 text-blue-900 transition-colors" title="Print Mode">
+            <i data-lucide="printer"></i>
+        </button>
+    </div>
+
+    <!-- Main Stage -->
+    <div id="mainStage" class="main-stage w-full max-w-5xl aspect-video bg-white shadow-2xl rounded-xl overflow-hidden relative flex flex-col transition-all">
+        
+        <!-- Top Bar -->
+        <div class="h-2 w-full bg-gradient-to-r from-blue-900 via-blue-600 to-blue-400 shrink-0"></div>
+
+        <!-- Slides Container -->
+        <div id="slidesContainer" class="flex-1 relative w-full h-full">
+
+            <!-- SLIDE 1: Title -->
+            <div class="slide active absolute inset-0 p-16 flex-col justify-center items-center text-center">
+                <div class="slide-in" style="animation-delay: 100ms">
+                    <div class="inline-block p-4 rounded-2xl bg-blue-50 mb-6">
+                        <i data-lucide="award" class="w-20 h-20 text-blue-700"></i>
+                    </div>
+                    <h1 class="text-6xl font-extrabold text-blue-900 tracking-tight leading-tight mb-4">CredzOnChain</h1>
+                    <h2 class="text-2xl text-blue-500 font-light max-w-2xl mx-auto">Verifiable Event Badges for WeThinkCode_</h2>
+                    <div class="pt-12">
+                        <p class="text-sm font-semibold text-gray-400 uppercase tracking-widest">Powered by Smart Contract Technology</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: The Problem -->
+            <div class="slide absolute inset-0 p-16 flex-col justify-center">
+                <div class="flex items-center gap-6 mb-10 slide-in">
+                    <div class="p-4 bg-blue-50 rounded-2xl shadow-sm">
+                        <i data-lucide="database" class="w-12 h-12 text-blue-600"></i>
+                    </div>
+                    <h2 class="text-5xl font-bold text-blue-900">The Problem: The 'Lost Proof'</h2>
+                </div>
+                <div class="space-y-6 pl-4">
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 200ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">High Activity Volume: Students attend dozens of bootcamps, hackathons, and workshops.</p>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 400ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">No Verified Record: Paper attendance lists are lost; existing proofs are just PDFs.</p>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 600ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">Missed Opportunities: Students struggle to prove 'soft skills' and extra-curricular engagement to employers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: The Solution -->
+            <div class="slide absolute inset-0 p-16 flex-col justify-center">
+                <div class="flex items-center gap-6 mb-10 slide-in">
+                    <div class="p-4 bg-blue-50 rounded-2xl shadow-sm">
+                        <i data-lucide="shield" class="w-12 h-12 text-blue-600"></i>
+                    </div>
+                    <h2 class="text-5xl font-bold text-blue-900">The Solution: Digital Proof</h2>
+                </div>
+                <div class="space-y-6 pl-4">
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 200ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">NFT-Based Badges: Attendance is minted as a permanent digital asset.</p>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 400ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">Tamper-Proof: Smart contracts ensure badges cannot be faked.</p>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 600ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">Student Owned: Badges live in the student's wallet, creating a lifelong portfolio.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Interactive Flow -->
+            <div class="slide absolute inset-0 p-16 flex-col">
+                <div class="mb-8 slide-in">
+                    <h2 class="text-4xl font-bold text-blue-900 mb-2">How It Works: Two-Sided Flow</h2>
+                    <p class="text-xl text-gray-500">A seamless bridge between Organizer and Student.</p>
+                </div>
+                
+                <!-- Interactive Demo Area -->
+                <div class="flex-1 bg-slate-50 rounded-2xl border border-slate-200 p-8 shadow-inner flex gap-8 items-center justify-between no-print">
+                    
+                    <!-- Step 1: Organizer -->
+                    <div id="demo-step-0" class="flex flex-col items-center gap-4 transition-all duration-500">
+                        <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-600 w-64">
+                            <h4 class="font-bold text-blue-900 mb-2 border-b pb-2">Admin Portal</h4>
+                            <div class="space-y-2 text-xs">
+                                <div class="h-2 bg-gray-200 rounded w-3/4"></div>
+                                <div class="h-2 bg-gray-200 rounded w-1/2"></div>
+                                <button onclick="setDemoStep(1)" class="w-full h-8 bg-blue-100 hover:bg-blue-200 rounded border border-blue-200 flex items-center justify-center text-blue-700 font-bold mt-4 transition-colors">
+                                    Create Event
+                                </button>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-blue-900">1. Organizer Inputs Data</span>
+                    </div>
+
+                    <!-- Arrow 1 -->
+                    <i data-lucide="arrow-right" id="arrow-1" class="text-gray-300 transition-colors duration-300 w-8 h-8"></i>
+
+                    <!-- Step 2: QR/Contract -->
+                    <div id="demo-step-1" class="flex flex-col items-center gap-4 transition-all duration-500 opacity-50">
+                        <div class="relative group cursor-pointer" onclick="setDemoStep(2)">
+                            <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 relative w-24 h-24 flex items-center justify-center">
+                                <i data-lucide="database" id="icon-step-1-start" class="w-10 h-10 text-gray-300"></i>
+                                <i data-lucide="qr-code" id="icon-step-1-end" class="w-16 h-16 text-blue-900 hidden"></i>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-blue-900">2. Smart Contract / QR</span>
+                    </div>
+
+                    <!-- Arrow 2 -->
+                    <i data-lucide="arrow-right" id="arrow-2" class="text-gray-300 transition-colors duration-300 w-8 h-8"></i>
+
+                    <!-- Step 3: Student -->
+                    <div id="demo-step-2" class="flex flex-col items-center gap-4 transition-all duration-500 opacity-50">
+                        <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-500 w-64 min-h-[140px] flex flex-col items-center justify-center">
+                             <div id="student-waiting" class="text-gray-400 text-sm">Waiting for scan...</div>
+                             <div id="student-success" class="hidden flex flex-col items-center animate-bounce">
+                                <i data-lucide="award" class="w-12 h-12 text-yellow-500 mb-2"></i>
+                                <span class="font-bold text-green-700">Badge Received!</span>
+                                <span class="text-xs text-gray-500 mt-1">ID: #83921 • WTC Hackathon</span>
+                             </div>
+                        </div>
+                        <span class="text-sm font-bold text-blue-900">3. Student Wallet</span>
+                    </div>
+
+                    <button onclick="setDemoStep(0)" id="reset-btn" class="hidden absolute bottom-4 right-4 text-xs text-gray-400 hover:text-blue-600 underline">Reset Demo</button>
+                </div>
+
+                <!-- Print Fallback (Static) -->
+                <div class="hidden print:flex flex-col justify-center h-full border border-gray-200 rounded p-4">
+                    <p class="font-bold">Interactive Flow Diagram:</p>
+                    <p>Organizer (Data Input) -> Smart Contract (QR Generation) -> Student (Wallet Claim)</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Tech Stack -->
+            <div class="slide absolute inset-0 p-16 flex-col justify-center">
+                <div class="flex items-center gap-6 mb-10 slide-in">
+                    <div class="p-4 bg-blue-50 rounded-2xl shadow-sm">
+                        <i data-lucide="layers" class="w-12 h-12 text-blue-600"></i>
+                    </div>
+                    <h2 class="text-5xl font-bold text-blue-900">The Tech Stack</h2>
+                </div>
+                <div class="space-y-6 pl-4">
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 200ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <div class="text-2xl text-gray-700 leading-relaxed font-light">
+                            <strong>Smart Contracts:</strong> Automate issuance and verification logic.
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 400ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <div class="text-2xl text-gray-700 leading-relaxed font-light">
+                            <strong>NFT Standard (ERC-721/1155):</strong> Ensures uniqueness for every badge.
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 600ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <div class="text-2xl text-gray-700 leading-relaxed font-light">
+                            <strong>Metadata Storage:</strong> Stores Event Name, Date, and XP Value permanently on-chain.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Use Cases -->
+            <div class="slide absolute inset-0 p-16 flex-col justify-center">
+                <h2 class="text-4xl font-bold text-blue-900 mb-12 slide-in">WeThinkCode_ Use Cases</h2>
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Item 1 -->
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 flex items-start gap-4 slide-in" style="animation-delay: 100ms">
+                        <div class="p-3 bg-white rounded-lg shadow-sm text-blue-600"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-1">Selection Bootcamps</h3>
+                            <p class="text-gray-600 leading-relaxed">Proof of grit and survival.</p>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 flex items-start gap-4 slide-in" style="animation-delay: 200ms">
+                        <div class="p-3 bg-white rounded-lg shadow-sm text-blue-600"><i data-lucide="award" class="w-6 h-6"></i></div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-1">Hackathons</h3>
+                            <p class="text-gray-600 leading-relaxed">Participation & Winner badges.</p>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 flex items-start gap-4 slide-in" style="animation-delay: 300ms">
+                        <div class="p-3 bg-white rounded-lg shadow-sm text-blue-600"><i data-lucide="database" class="w-6 h-6"></i></div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-1">Workshops</h3>
+                            <p class="text-gray-600 leading-relaxed">Verified skill acquisition (Docker, SQL).</p>
+                        </div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 flex items-start gap-4 slide-in" style="animation-delay: 400ms">
+                        <div class="p-3 bg-white rounded-lg shadow-sm text-blue-600"><i data-lucide="users" class="w-6 h-6"></i></div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-1">Community</h3>
+                            <p class="text-gray-600 leading-relaxed">Peer mentorship and soft skills.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Value Prop -->
+            <div class="slide absolute inset-0 p-16 flex-col justify-center">
+                <div class="flex items-center gap-6 mb-10 slide-in">
+                    <div class="p-4 bg-blue-50 rounded-2xl shadow-sm">
+                        <i data-lucide="check-circle" class="w-12 h-12 text-blue-600"></i>
+                    </div>
+                    <h2 class="text-5xl font-bold text-blue-900">Value Proposition</h2>
+                </div>
+                <div class="space-y-6 pl-4">
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 200ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">For Organizers: No more manual data entry or paper registers.</p>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 400ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">For Students: Gamified progress and a verifiable CV.</p>
+                    </div>
+                    <div class="flex items-start gap-4 slide-in" style="animation-delay: 600ms">
+                        <div class="mt-3 min-w-[12px] h-3 rounded-full bg-blue-500"></div>
+                        <p class="text-2xl text-gray-700 leading-relaxed font-light">For Employers: Instant trust that a candidate actually has the skills they claim.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: Thank You -->
+            <div class="slide absolute inset-0 p-16 flex-col justify-center items-center text-center">
+                <div class="slide-in">
+                    <div class="inline-block p-4 rounded-2xl bg-blue-50 mb-6">
+                        <i data-lucide="smile" class="w-20 h-20 text-blue-700"></i>
+                    </div>
+                    <h1 class="text-6xl font-extrabold text-blue-900 tracking-tight leading-tight mb-4">Thank You</h1>
+                    <h2 class="text-2xl text-blue-500 font-light max-w-2xl mx-auto">Let's put achievement on the blockchain.</h2>
+                    <div class="pt-12">
+                        <p class="text-sm font-semibold text-gray-400 uppercase tracking-widest">CredzOnChain x WeThinkCode_</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="absolute bottom-6 left-8 flex items-center gap-2 opacity-50 z-20">
+            <div class="w-4 h-4 bg-blue-600 rounded-sm"></div>
+            <span class="text-xs font-bold tracking-widest text-blue-900 uppercase">CredzOnChain</span>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Slide Logic
+        const slides = document.querySelectorAll('.slide');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+        const slideCounter = document.getElementById('slideCounter');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                    // Reset animations
+                    const animated = slide.querySelectorAll('.slide-in');
+                    animated.forEach(el => {
+                        el.style.animation = 'none';
+                        el.offsetHeight; /* trigger reflow */
+                        el.style.animation = null; 
+                    });
+                }
+            });
+            slideCounter.innerText = `${currentIndex + 1} / ${totalSlides}`;
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                currentIndex = newIndex;
+                updateSlide();
+            }
+        }
+
+        // Keyboard Nav
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        // Print Mode Logic
+        function togglePrintMode() {
+            document.body.classList.toggle('print-mode');
+            document.body.classList.toggle('view-mode');
+            
+            const isPrint = document.body.classList.contains('print-mode');
+            if (isPrint) {
+                alert("Print Mode Active.\n\nPress Ctrl+P (Cmd+P) to save as PDF.\nSelect 'Landscape' layout and remove margins for best results.");
+            }
+        }
+
+        // Interactive Demo Logic
+        let demoStep = 0;
+        
+        function setDemoStep(step) {
+            demoStep = step;
+            const step0 = document.getElementById('demo-step-0');
+            const step1 = document.getElementById('demo-step-1');
+            const step2 = document.getElementById('demo-step-2');
+            
+            const arrow1 = document.getElementById('arrow-1');
+            const arrow2 = document.getElementById('arrow-2');
+            
+            const iconStart = document.getElementById('icon-step-1-start');
+            const iconEnd = document.getElementById('icon-step-1-end');
+            
+            const studentWait = document.getElementById('student-waiting');
+            const studentSuccess = document.getElementById('student-success');
+            const resetBtn = document.getElementById('reset-btn');
+
+            // Reset States
+            [step0, step1, step2].forEach(el => {
+                el.classList.remove('scale-110', 'opacity-100');
+                el.classList.add('opacity-50');
+            });
+            
+            arrow1.classList.remove('text-blue-500', 'scale-125');
+            arrow2.classList.remove('text-blue-500', 'scale-125');
+
+            // Logic per step
+            if (step === 0) {
+                step0.classList.remove('opacity-50');
+                step0.classList.add('scale-110', 'opacity-100');
+                
+                iconStart.classList.remove('hidden');
+                iconEnd.classList.add('hidden');
+                studentWait.classList.remove('hidden');
+                studentSuccess.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+            } 
+            else if (step === 1) {
+                step0.classList.remove('opacity-50'); // Keep prev visible
+                step1.classList.remove('opacity-50');
+                step1.classList.add('scale-110', 'opacity-100');
+                
+                arrow1.classList.add('text-blue-500', 'scale-125');
+                
+                iconStart.classList.add('hidden');
+                iconEnd.classList.remove('hidden');
+            }
+            else if (step === 2) {
+                step0.classList.remove('opacity-50');
+                step1.classList.remove('opacity-50');
+                step2.classList.remove('opacity-50');
+                step2.classList.add('scale-110', 'opacity-100');
+                
+                arrow1.classList.add('text-blue-500');
+                arrow2.classList.add('text-blue-500', 'scale-125');
+                
+                studentWait.classList.add('hidden');
+                studentSuccess.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

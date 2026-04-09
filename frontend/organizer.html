@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CredzOnChain Organizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+
+        h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .home-btn {
+            padding: 0.625rem 1.25rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .home-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Wallet Connection Styles */
+        .wallet-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            border: 2px solid #bfdbfe;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .wallet-info {
+            flex: 1;
+        }
+
+        .wallet-label {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #764ba2;
+            font-size: 1rem;
+            word-break: break-all;
+        }
+
+        .wallet-disconnected {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .connect-wallet-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .connect-wallet-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .connect-wallet-btn.disconnect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .connect-wallet-btn.disconnect:hover {
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .network-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            border: 2px solid #bfdbfe;
+        }
+
+        .network-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Form Styles */
+        .form-section {
+            transition: all 0.3s ease;
+        }
+
+        .form-section.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .input-helper {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #34d399;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #f87171;
+        }
+
+        .message.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid #fbbf24;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .modal-content h2::before {
+            content: "✨ ";
+        }
+
+        .event-id-display {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+            border: 2px solid #bfdbfe;
+        }
+
+        .event-id-label {
+            color: #667eea;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-id-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #764ba2;
+            font-size: 1.3rem;
+            word-break: break-all;
+        }
+
+        .claim-url-display {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .claim-url-label {
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .claim-url-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #334155;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+
+        #qrCodeContainer {
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        #qrCodeContainer img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .secondary-button {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #475569;
+        }
+
+        .secondary-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            box-shadow: 0 4px 15px rgba(71, 85, 105, 0.3);
+        }
+
+        .close-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .timestamp-helper {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .timestamp-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0;
+        }
+
+        .timestamp-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .success-icon {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            .header-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .home-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .close-button {
+                grid-column: 1;
+            }
+
+            .wallet-status {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .connect-wallet-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1>🎫 Create New Event</h1>
+            <a href="index.html" class="home-btn">
+                🏠 Home
+            </a>
+        </div>
+        <p class="subtitle">Set up your blockchain-verified event and generate QR codes for attendees</p>
+        
+        <!-- Wallet Connection Section -->
+        <div class="wallet-section">
+            <div class="wallet-status">
+                <div class="wallet-info">
+                    <div class="wallet-label">Wallet Status</div>
+                    <div class="wallet-address" id="walletAddress">
+                        <span class="wallet-disconnected">Not connected</span>
+                    </div>
+                    <div id="networkBadge" style="display: none;">
+                        <div class="network-badge">
+                            <div class="network-indicator"></div>
+                            <span id="networkName">Unknown Network</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="connectWalletBtn" class="connect-wallet-btn">
+                    Connect Wallet
+                </button>
+            </div>
+        </div>
+
+        <div id="walletWarning" class="message warning" style="display: none;">
+            ⚠️ Please connect your wallet to create events
+        </div>
+
+        <!-- Event Creation Form -->
+        <div class="form-section disabled" id="formSection">
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label for="name">Event Name</label>
+                    <input type="text" id="name" placeholder="e.g., Web3 Summit 2024" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" placeholder="Tell attendees what this event is about..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventType">Event Type</label>
+                    <input type="number" id="eventType" placeholder="1" value="1" required>
+                    <div class="input-helper">Numeric identifier for categorizing your event</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="timestamp">Event Timestamp (Unix)</label>
+                    <input type="number" id="timestamp" placeholder="1701388800" required>
+                    <div class="timestamp-helper">
+                        <button type="button" class="timestamp-btn" onclick="setCurrentTime()">Now</button>
+                        <button type="button" class="timestamp-btn" onclick="setTimeOffset(3600)">+1 Hour</button>
+                        <button type="button" class="timestamp-btn" onclick="setTimeOffset(86400)">+1 Day</button>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn">Create Event</button>
+            </form>
+        </div>
+
+        <div id="eventResult" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">🎉</div>
+            <h2>Event Created!</h2>
+            
+            <div class="event-id-display">
+                <div class="event-id-label">Event ID</div>
+                <div class="event-id-value" id="modalEventId"></div>
+            </div>
+
+            <div class="claim-url-display">
+                <div class="claim-url-label">Claim URL</div>
+                <div class="claim-url-value" id="modalClaimUrl"></div>
+            </div>
+
+            <div id="qrCodeContainer">
+                <div style="text-align: center; color: #64748b;">
+                    <p>Click "Generate QR Code" to create a scannable code</p>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="generateQrButton" style="margin: 0;">Generate QR Code</button>
+                <button id="downloadQrButton" class="secondary-button" style="margin: 0; display: none;">Download QR</button>
+                <button id="copyLinkButton" class="secondary-button" style="margin: 0;">Copy Link</button>
+                <button id="closeModalButton" class="close-button" style="margin: 0;">Create Another Event</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEventId = null;
+        let currentClaimUrl = null;
+        let walletAddress = null;
+        let provider = null;
+
+        // Determine API base URL
+        const API_BASE_URL = (() => {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            return `${protocol}//${hostname}:8000`;
+        })();
+
+        // Determine frontend base URL for claim links
+        const FRONTEND_BASE_URL = (() => {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            const port = window.location.port ? `:${window.location.port}` : '';
+            return `${protocol}//${hostname}${port}`;
+        })();
+
+        // Check if MetaMask is installed
+        function isMetaMaskInstalled() {
+            return typeof window.ethereum !== 'undefined';
+        }
+
+        // Get network name
+        function getNetworkName(chainId) {
+            const networks = {
+                '0x1': 'Ethereum Mainnet',
+                '0x5': 'Goerli Testnet',
+                '0xaa36a7': 'Sepolia Testnet',
+                '0x89': 'Polygon Mainnet',
+                '0x13881': 'Mumbai Testnet',
+                '0x61': 'BSC Testnet',
+                '0x38': 'BSC Mainnet',
+                '0xa4b1': 'Arbitrum One',
+                '0x2105': 'Base Mainnet',
+                '0x14a33': 'Base Sepolia'
+            };
+            return networks[chainId] || `Chain ID: ${chainId}`;
+        }
+
+        // Update UI based on wallet connection status
+        function updateWalletUI(connected, address = null) {
+            const walletAddressEl = document.getElementById('walletAddress');
+            const connectBtn = document.getElementById('connectWalletBtn');
+            const formSection = document.getElementById('formSection');
+            const walletWarning = document.getElementById('walletWarning');
+            const networkBadge = document.getElementById('networkBadge');
+
+            if (connected && address) {
+                walletAddress = address;
+                const shortAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
+                walletAddressEl.innerHTML = shortAddress;
+                walletAddressEl.classList.remove('wallet-disconnected');
+                connectBtn.textContent = 'Disconnect';
+                connectBtn.classList.add('disconnect');
+                formSection.classList.remove('disabled');
+                walletWarning.style.display = 'none';
+                networkBadge.style.display = 'block';
+                
+                // Get and display network
+                if (window.ethereum) {
+                    window.ethereum.request({ method: 'eth_chainId' })
+                        .then(chainId => {
+                            document.getElementById('networkName').textContent = getNetworkName(chainId);
+                        });
+                }
+            } else {
+                walletAddress = null;
+                walletAddressEl.innerHTML = '<span class="wallet-disconnected">Not connected</span>';
+                walletAddressEl.classList.add('wallet-disconnected');
+                connectBtn.textContent = 'Connect Wallet';
+                connectBtn.classList.remove('disconnect');
+                formSection.classList.add('disabled');
+                walletWarning.style.display = 'block';
+                networkBadge.style.display = 'none';
+            }
+        }
+
+        // Connect wallet
+        async function connectWallet() {
+            if (!isMetaMaskInstalled()) {
+                alert('MetaMask is not installed. Please install MetaMask to continue.');
+                window.open('https://metamask.io/download/', '_blank');
+                return;
+            }
+
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts.length > 0) {
+                    updateWalletUI(true, accounts[0]);
+                    console.log('Wallet connected:', accounts[0]);
+                }
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                const resultDiv = document.getElementById('eventResult');
+                resultDiv.className = 'message error';
+                resultDiv.textContent = `✗ Failed to connect wallet: ${error.message}`;
+                resultDiv.style.display = 'block';
+                setTimeout(() => resultDiv.style.display = 'none', 5000);
+            }
+        }
+
+        // Disconnect wallet
+        function disconnectWallet() {
+            updateWalletUI(false);
+            console.log('Wallet disconnected');
+        }
+
+        // Handle wallet connection button
+        document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+            if (walletAddress) {
+                disconnectWallet();
+            } else {
+                await connectWallet();
+            }
+        });
+
+        // Listen for account changes
+        if (isMetaMaskInstalled()) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    disconnectWallet();
+                } else {
+                    updateWalletUI(true, accounts[0]);
+                }
+            });
+
+            // Listen for chain changes
+            window.ethereum.on('chainChanged', (chainId) => {
+                document.getElementById('networkName').textContent = getNetworkName(chainId);
+            });
+
+            // Check if already connected on page load
+            window.ethereum.request({ method: 'eth_accounts' })
+                .then(accounts => {
+                    if (accounts.length > 0) {
+                        updateWalletUI(true, accounts[0]);
+                    }
+                })
+                .catch(err => console.error('Error checking accounts:', err));
+        }
+
+        // Timestamp helper functions
+        function setCurrentTime() {
+            document.getElementById('timestamp').value = Math.floor(Date.now() / 1000);
+        }
+
+        function setTimeOffset(seconds) {
+            document.getElementById('timestamp').value = Math.floor(Date.now() / 1000) + seconds;
+        }
+
+        // API functions
+        async function createEvent(name, description, eventType, timestamp) {
+            const response = await fetch(`${API_BASE_URL}/create_event`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    name, 
+                    description, 
+                    eventType, 
+                    timestamp,
+                    organizerAddress: walletAddress 
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Failed to create event');
+            }
+            
+            return await response.json();
+        }
+
+        async function generateQR(eventId) {
+            const response = await fetch(`${API_BASE_URL}/generate_qr`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eventId: parseInt(eventId) })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Failed to generate QR code');
+            }
+            
+            return await response.json();
+        }
+
+        // Form submission
+        document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!walletAddress) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('eventResult');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> Creating Event...';
+            resultDiv.style.display = 'none';
+            
+            try {
+                const name = document.getElementById('name').value;
+                const description = document.getElementById('description').value;
+                const eventType = parseInt(document.getElementById('eventType').value);
+                const timestamp = parseInt(document.getElementById('timestamp').value);
+                
+                console.log('Creating event:', { name, description, eventType, timestamp, organizerAddress: walletAddress });
+                
+                const result = await createEvent(name, description, eventType, timestamp);
+                
+                console.log('Event created:', result);
+                
+                if (result.eventId) {
+                    currentEventId = result.eventId;
+                    currentClaimUrl = `${FRONTEND_BASE_URL}/claim.html?eventId=${currentEventId}`;
+                    
+                    // Update modal content
+                    document.getElementById('modalEventId').textContent = currentEventId;
+                    document.getElementById('modalClaimUrl').textContent = currentClaimUrl;
+                    
+                    // Show modal
+                    document.getElementById('qrModal').classList.add('active');
+                    
+                    // Reset form
+                    document.getElementById('createEventForm').reset();
+                    setCurrentTime();
+                    
+                    resultDiv.className = 'message success';
+                    resultDiv.textContent = '✓ Event created successfully!';
+                    resultDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        resultDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error('No event ID returned');
+                }
+            } catch (error) {
+                console.error('Error creating event:', error);
+                resultDiv.className = 'message error';
+                resultDiv.textContent = `✗ Error: ${error.message}`;
+                resultDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Event';
+            }
+        });
+
+        // QR code generation
+        document.getElementById('generateQrButton').addEventListener('click', async () => {
+            if (!currentEventId) return;
+            
+            const btn = document.getElementById('generateQrButton');
+            const downloadBtn = document.getElementById('downloadQrButton');
+            const container = document.getElementById('qrCodeContainer');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Generating...';
+            
+            try {
+                console.log('Generating QR for event:', currentEventId);
+                
+                const result = await generateQR(currentEventId);
+                
+                console.log('QR generated:', result);
+                
+                if (result.qr_code_base64) {
+                    const imgSrc = `data:image/png;base64,${result.qr_code_base64}`;
+                    container.innerHTML = `<img src="${imgSrc}" alt="Event QR Code" id="qrImage">`;
+                    downloadBtn.style.display = 'block';
+                    btn.textContent = 'Regenerate QR Code';
+                } else {
+                    throw new Error('No QR code data returned');
+                }
+            } catch (error) {
+                console.error('Error generating QR:', error);
+                container.innerHTML = `<p style="color: #991b1b; text-align: center;">Error: ${error.message}</p>`;
+            } finally {
+                btn.disabled = false;
+                if (!btn.textContent.includes('Regenerate')) {
+                    btn.textContent = 'Generate QR Code';
+                }
+            }
+        });
+
+        // Download QR code
+        document.getElementById('downloadQrButton').addEventListener('click', () => {
+            const img = document.getElementById('qrImage');
+            if (!img) return;
+            
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.download = `event-${currentEventId}-qr-code.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Copy claim link
+        document.getElementById('copyLinkButton').addEventListener('click', async () => {
+            if (!currentClaimUrl) return;
+            
+            const btn = document.getElementById('copyLinkButton');
+            const originalText = btn.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(currentClaimUrl);
+                btn.textContent = '✓ Copied!';
+                btn.style.background = 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)';
+                btn.style.color = '#065f46';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2000);
+            } catch (error) {
+                console.error('Failed to copy:', error);
+                alert('Failed to copy link. Please copy manually: ' + currentClaimUrl);
+            }
+        });
+
+        // Close modal
+        document.getElementById('closeModalButton').addEventListener('click', () => {
+            document.getElementById('qrModal').classList.remove('active');
+            document.getElementById('qrCodeContainer').innerHTML = `
+                <div style="text-align: center; color: #64748b;">
+                    <p>Click "Generate QR Code" to create a scannable code</p>
+                </div>
+            `;
+            document.getElementById('downloadQrButton').style.display = 'none';
+            document.getElementById('generateQrButton').textContent = 'Generate QR Code';
+            currentEventId = null;
+            currentClaimUrl = null;
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('qrModal').addEventListener('click', (e) => {
+            if (e.target.id === 'qrModal') {
+                document.getElementById('closeModalButton').click();
+            }
+        });
+
+        // Set current time on page load
+        setCurrentTime();
+    </script>
+</body>
+</html>
