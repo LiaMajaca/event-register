@@ -46,6 +46,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the 'frontend' directory
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
 // Contract ABI
 const CONTRACT_ABI = [
   {
@@ -363,7 +366,7 @@ app.get('/get_badge_details', async (req, res) => {
       success: true,
       name: event.name,
       description: event.description,
-      image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="180" height="180"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%233b82f6;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%232563eb;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23grad)" width="180" height="180" rx="16"/%3E%3Ctext x="50%25" y="50%25" font-size="80" text-anchor="middle" dy=".3em"%3E🏆%3C/text%3E%3C/svg%3E',
+      image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="180" height="180"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%233b82f6;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%232563eb;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23grad)" width="180" height="180" rx="16"/%3E%3Ctext x="50%25" y="50%25" font-size="80" text-anchor="middle" dy=".3em"%3EðŸ†%3C/text%3E%3C/svg%3E',
       eventId: parseInt(eventId)
     };
 

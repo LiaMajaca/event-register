@@ -72,6 +72,78 @@
       "artifacts": [
         "Lock"
       ]
+    },
+    "/home/lia/Documents/event-register/contracts/CredzOnChain.sol": {
+      "lastModificationDate": 1775719657206,
+      "contentHash": "4c43431d9cb67a2999695c9cb4f43886",
+      "sourceName": "contracts/CredzOnChain.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "CredzOnChain"
+      ]
+    },
+    "/home/lia/Documents/event-register/contracts/Lock.sol": {
+      "lastModificationDate": 1775719657206,
+      "contentHash": "1ddcc1a0f1ce560b2ac9c0186dc650cd",
+      "sourceName": "contracts/Lock.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "Lock"
+      ]
     }
   }
 }
